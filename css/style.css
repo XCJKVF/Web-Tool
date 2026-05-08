@@ -233,6 +233,22 @@ body {
 
 .tool-panel {
     animation: fadeIn 200ms ease;
+    position: relative;
+    z-index: 10;
+}
+
+/* 工具面板容器 */
+.tool-panels-container {
+    margin: 0 16px 32px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .tool-panels-container {
+        margin: 0 8px 16px;
+    }
 }
 
 @keyframes fadeIn {
