@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>工具集合 - 免费在线工具箱 | 图片转换/MD5/二维码生成</title>
+    <meta name="description" content="免费在线工具集合，提供图片格式转换、MD5加密、简繁体转换、二维码生成、Base64编码解码等实用工具。无需注册，即用即走。">
+    <meta name="keywords" content="在线工具,图片转换,MD5加密,二维码生成,简繁体转换,Base64编码,URL编码,时间戳转换,颜色格式转换">
+    <meta name="author" content="工具集合">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://example.com/">
+    <meta property="og:title" content="工具集合 - 免费在线工具箱">
+    <meta property="og:description" content="免费在线工具集合，提供图片格式转换、MD5加密、简繁体转换、二维码生成等实用工具。">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "工具集合",
+        "description": "免费在线工具集合，提供多种实用工具",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any"
+    }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="#" class="logo" onclick="showHome(); return false;">工具集合</a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-list" id="navList">
+                <li><a href="#" data-category="all" class="active" onclick="filterTools('all'); return false;">全部工具</a></li>
+                <li><a href="#" data-category="format" onclick="filterTools('format'); return false;">格式转换</a></li>
+                <li><a href="#" data-category="encode" onclick="filterTools('encode'); return false;">编码加密</a></li>
+                <li><a href="#" data-category="generate" onclick="filterTools('generate'); return false;">生成工具</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="hero container" id="heroSection">
+            <h1>简单实用的在线工具箱</h1>
+            <p>无需注册，即用即走。专注于解决日常工作中的小问题。</p>
+            <div class="hero-tools">
+                <button class="hero-tool-btn" onclick="switchTool('imageConverter')">图片格式转换</button>
+                <button class="hero-tool-btn" onclick="switchTool('md5')">MD5加密</button>
+                <button class="hero-tool-btn" onclick="switchTool('qrcode')">二维码生成</button>
+                <button class="hero-tool-btn" onclick="switchTool('timestamp')">时间戳转换</button>
+            </div>
+        </section>
+
+        <section class="tools-section container" id="toolsSection">
+            <h2 class="section-title">所有工具</h2>
+            <div class="tools-grid" id="toolsGrid">
+                <div class="tool-card" data-tool="imageConverter" data-category="format" onclick="switchTool('imageConverter')">
+                    <div class="tool-icon">🖼️</div>
+                    <h3>图片格式转换</h3>
+                    <p>支持JPG、PNG、WebP、GIF、BMP互转</p>
+                </div>
+                <div class="tool-card" data-tool="md5" data-category="encode" onclick="switchTool('md5')">
+                    <div class="tool-icon">🔐</div>
+                    <h3>MD5加密</h3>
+                    <p>文本MD5哈希加密</p>
+                </div>
+                <div class="tool-card" data-tool="simplifiedTraditional" data-category="format" onclick="switchTool('simplifiedTraditional')">
+                    <div class="tool-icon">繁</div>
+                    <h3>简繁体转换</h3>
+                    <p>简体繁体实时互转</p>
+                </div>
+                <div class="tool-card" data-tool="qrcode" data-category="generate" onclick="switchTool('qrcode')">
+                    <div class="tool-icon">📱</div>
+                    <h3>二维码生成</h3>
+                    <p>文本或URL生成二维码</p>
+                </div>
+                <div class="tool-card" data-tool="base64" data-category="encode" onclick="switchTool('base64')">
+                    <div class="tool-icon">📝</div>
+                    <h3>Base64编码</h3>
+                    <p>Base64编码解码工具</p>
+                </div>
+                <div class="tool-card" data-tool="urlCodec" data-category="encode" onclick="switchTool('urlCodec')">
+                    <div class="tool-icon">🔗</div>
+                    <h3>URL编码</h3>
+                    <p>URL编码解码工具</p>
+                </div>
+                <div class="tool-card" data-tool="colorConverter" data-category="format" onclick="switchTool('colorConverter')">
+                    <div class="tool-icon">🎨</div>
+                    <h3>颜色格式转换</h3>
+                    <p>HEX、RGB、HSL互转</p>
+                </div>
+                <div class="tool-card" data-tool="timestamp" data-category="format" onclick="switchTool('timestamp')">
+                    <div class="tool-icon">⏰</div>
+                    <h3>时间戳转换</h3>
+                    <p>Unix时间戳与日期互转</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tool-workspace container" id="toolWorkspace">
+            <div class="workspace-header">
+                <h2 id="workspaceTitle">选择工具</h2>
+                <button class="back-btn" onclick="showHome()" style="display:none;">返回工具列表</button>
+            </div>
+            <div class="workspace-content" id="workspaceContent">
+                <div class="welcome-message">
+                    <p>点击上方工具卡片开始使用</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 工具集合. All rights reserved.</p>
+            <p>本站所有工具完全免费，不收集任何用户数据。</p>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="tool-panel" id="imageConverterPanel" style="display:none;">
+        <div class="tool-description">
+            <p>支持将图片转换为JPG、PNG、WebP、GIF、BMP格式。点击选择或拖拽上传图片。</p>
+        </div>
+        <div class="upload-area" id="imageUploadArea">
+            <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+            <div class="upload-placeholder" onclick="document.getElementById('imageFileInput').click()">
+                <span class="upload-icon">📁</span>
+                <p>点击选择图片或拖拽到这里</p>
+                <p class="upload-hint">支持 JPG, PNG, WebP, GIF, BMP (最大10MB)</p>
+            </div>
+            <div class="preview-container" id="imagePreviewContainer" style="display:none;">
+                <img id="imagePreview" alt="预览">
+                <button class="remove-btn" onclick="removeImage()">×</button>
+            </div>
+        </div>
+        <div class="format-select" id="formatSelect" style="display:none;">
+            <label>转换为：</label>
+            <select id="targetFormat">
+                <option value="image/jpeg">JPG</option>
+                <option value="image/png">PNG</option>
+                <option value="image/webp">WebP</option>
+            </select>
+            <button class="btn btn-primary" onclick="convertImage()">转换</button>
+        </div>
+        <div class="result-area" id="imageResultArea" style="display:none;">
+            <h4>转换完成</h4>
+            <img id="convertedImage" alt="转换结果">
+            <button class="btn btn-primary" onclick="downloadConvertedImage()">下载图片</button>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="md5Panel" style="display:none;">
+        <div class="tool-description">
+            <p>输入文本获取MD5哈希值。MD5是一种常用的哈希算法，常用于密码存储和数据校验。</p>
+        </div>
+        <textarea id="md5Input" class="input-textarea" placeholder="请输入要加密的文本..." rows="4"></textarea>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="generateMD5()">生成MD5</button>
+            <button class="btn btn-secondary" onclick="copyMD5()">复制结果</button>
+        </div>
+        <div class="result-box" id="md5Result" style="display:none;">
+            <label>MD5哈希值：</label>
+            <div class="result-value">
+                <code id="md5Value"></code>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="simplifiedTraditionalPanel" style="display:none;">
+        <div class="tool-description">
+            <p>将简体中文转换为繁体中文，或将繁体中文转换为简体中文。</p>
+        </div>
+        <textarea id="stInput" class="input-textarea" placeholder="请输入要转换的文本..." rows="4"></textarea>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="toTraditional()">转繁体</button>
+            <button class="btn btn-primary" onclick="toSimplified()">转简体</button>
+            <button class="btn btn-secondary" onclick="copySTResult()">复制结果</button>
+        </div>
+        <div class="result-box" id="stResultBox" style="display:none;">
+            <label>转换结果：</label>
+            <div class="result-value">
+                <textarea id="stOutput" class="input-textarea" rows="4" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="qrcodePanel" style="display:none;">
+        <div class="tool-description">
+            <p>输入文本或URL生成二维码图片，可自定义尺寸。</p>
+        </div>
+        <textarea id="qrcodeInput" class="input-textarea" placeholder="请输入文本或网址..." rows="2"></textarea>
+        <div class="format-select">
+            <label>尺寸：</label>
+            <select id="qrcodeSize">
+                <option value="100">100px</option>
+                <option value="150">150px</option>
+                <option value="200" selected>200px</option>
+                <option value="250">250px</option>
+                <option value="300">300px</option>
+                <option value="400">400px</option>
+            </select>
+            <button class="btn btn-primary" onclick="generateQRCode()">生成二维码</button>
+        </div>
+        <div class="result-area" id="qrcodeResult" style="display:none;">
+            <h4>二维码</h4>
+            <div id="qrcodeContainer"></div>
+            <button class="btn btn-primary" onclick="downloadQRCode()">下载二维码</button>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="base64Panel" style="display:none;">
+        <div class="tool-description">
+            <p>Base64是一种基于64个可打印字符来表示二进制数据的编码方式。</p>
+        </div>
+        <div class="mode-toggle">
+            <button class="btn btn-secondary active" id="base64EncodeBtn" onclick="setBase64Mode('encode')">编码</button>
+            <button class="btn btn-secondary" id="base64DecodeBtn" onclick="setBase64Mode('decode')">解码</button>
+        </div>
+        <textarea id="base64Input" class="input-textarea" placeholder="请输入文本..." rows="4"></textarea>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="processBase64()">转换</button>
+            <button class="btn btn-secondary" onclick="copyBase64Result()">复制结果</button>
+        </div>
+        <div class="result-box" id="base64ResultBox" style="display:none;">
+            <label>结果：</label>
+            <div class="result-value">
+                <textarea id="base64Output" class="input-textarea" rows="4" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="urlCodecPanel" style="display:none;">
+        <div class="tool-description">
+            <p>URL编码用于将特殊字符转换为URL安全格式。</p>
+        </div>
+        <div class="mode-toggle">
+            <button class="btn btn-secondary active" id="urlEncodeBtn" onclick="setUrlMode('encode')">编码</button>
+            <button class="btn btn-secondary" id="urlDecodeBtn" onclick="setUrlMode('decode')">解码</button>
+        </div>
+        <textarea id="urlInput" class="input-textarea" placeholder="请输入URL或文本..." rows="4"></textarea>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="processUrl()">转换</button>
+            <button class="btn btn-secondary" onclick="copyUrlResult()">复制结果</button>
+        </div>
+        <div class="result-box" id="urlResultBox" style="display:none;">
+            <label>结果：</label>
+            <div class="result-value">
+                <textarea id="urlOutput" class="input-textarea" rows="4" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="colorConverterPanel" style="display:none;">
+        <div class="tool-description">
+            <p>在不同颜色格式之间转换：HEX、RGB、HSL。</p>
+        </div>
+        <div class="color-input-group">
+            <div class="color-preview" id="colorPreview" style="background-color:#2563EB;"></div>
+            <input type="text" id="colorInput" class="input-field" placeholder="输入颜色值，如 #2563EB 或 rgb(37, 99, 235)" value="#2563EB">
+            <button class="btn btn-primary" onclick="convertColor()">转换</button>
+        </div>
+        <div class="color-outputs" id="colorOutputs" style="display:none;">
+            <div class="color-output-item">
+                <label>HEX</label>
+                <div class="color-value">
+                    <input type="text" id="hexOutput" class="input-field small" readonly>
+                    <button class="btn btn-small" onclick="copyColorValue('hexOutput')">复制</button>
+                </div>
+            </div>
+            <div class="color-output-item">
+                <label>RGB</label>
+                <div class="color-value">
+                    <input type="text" id="rgbOutput" class="input-field small" readonly>
+                    <button class="btn btn-small" onclick="copyColorValue('rgbOutput')">复制</button>
+                </div>
+            </div>
+            <div class="color-output-item">
+                <label>HSL</label>
+                <div class="color-value">
+                    <input type="text" id="hslOutput" class="input-field small" readonly>
+                    <button class="btn btn-small" onclick="copyColorValue('hslOutput')">复制</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-panel" id="timestampPanel" style="display:none;">
+        <div class="tool-description">
+            <p>Unix时间戳是自1970年1月1日以来的秒数，常用于编程和数据库存储。</p>
+        </div>
+        <div class="timestamp-display">
+            <div class="current-timestamp">
+                <label>当前时间戳：</label>
+                <div class="timestamp-value">
+                    <code id="currentTimestamp"></code>
+                    <button class="btn btn-small" onclick="copyTimestamp()">复制</button>
+                </div>
+            </div>
+            <div class="current-date">
+                <label>当前时间：</label>
+                <span id="currentDate"></span>
+            </div>
+        </div>
+        <div class="timestamp-convert">
+            <div class="convert-row">
+                <label>时间戳：</label>
+                <input type="number" id="timestampInput" class="input-field" placeholder="输入时间戳">
+                <button class="btn btn-primary" onclick="timestampToDate()">转日期</button>
+            </div>
+            <div class="convert-row">
+                <label>日期：</label>
+                <input type="datetime-local" id="dateInput" class="input-field">
+                <button class="btn btn-primary" onclick="dateToTimestamp()">转时间戳</button>
+            </div>
+        </div>
+        <div class="result-box" id="timestampResult" style="display:none;">
+            <label>转换结果：</label>
+            <div class="result-value">
+                <code id="timestampResultValue"></code>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
