@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试工具页面</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h1>工具测试页面</h1>
+        <p>点击下面的按钮测试工具切换功能：</p>
+
+        <div style="margin: 20px 0;">
+            <button onclick="switchTool('imageConverter')">测试图片转换</button>
+            <button onclick="switchTool('md5')">测试MD5</button>
+            <button onclick="switchTool('qrcode')">测试二维码</button>
+            <button onclick="showHome()">返回首页</button>
+        </div>
+    </div>
+
+    <!-- 工具面板容器 -->
+    <div class="tool-panels-container" id="toolPanelsContainer">
+        <!-- 图片格式转换 -->
+        <div class="tool-panel" id="imageConverterPanel" style="display:none;">
+            <h3>图片格式转换</h3>
+            <p>支持将图片转换为JPG、PNG、WebP、GIF、BMP格式。</p>
+            <input type="file" accept="image/*">
+            <button class="btn btn-primary" onclick="ImageConverter.convert()">转换</button>
+        </div>
+
+        <!-- MD5加密 -->
+        <div class="tool-panel" id="md5Panel" style="display:none;">
+            <h3>MD5加密</h3>
+            <textarea id="md5Input" placeholder="请输入要加密的文本..." rows="4" style="width: 100%; margin: 10px 0;"></textarea>
+            <button class="btn btn-primary" onclick="MD5Tool.generate()">生成MD5</button>
+            <button class="btn btn-secondary" onclick="MD5Tool.copy()">复制结果</button>
+            <div id="md5Result" style="display:none; margin-top: 10px;">
+                <label>MD5哈希值：</label>
+                <code id="md5Value"></code>
+            </div>
+        </div>
+
+        <!-- 二维码生成 -->
+        <div class="tool-panel" id="qrcodePanel" style="display:none;">
+            <h3>二维码生成</h3>
+            <textarea id="qrcodeInput" placeholder="请输入文本或网址..." rows="2" style="width: 100%; margin: 10px 0;"></textarea>
+            <select id="qrcodeSize" style="margin: 10px 0;">
+                <option value="200">200px</option>
+                <option value="300">300px</option>
+            </select>
+            <button class="btn btn-primary" onclick="QRCodeTool.generate()">生成二维码</button>
+            <div id="qrcodeResult" style="display:none; margin-top: 10px;">
+                <div id="qrcodeContainer"></div>
+                <button class="btn btn-primary" onclick="QRCodeTool.download()" style="margin-top: 10px;">下载二维码</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工具函数 -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/tools-simple.js"></script>
+    <script>
+        // 简化的应用类
+        class TestApp {
+            switchTool(toolName) {
+                console.log('Switching to tool:', toolName);
+
+                // 隐藏所有面板
+                document.querySelectorAll('.tool-panel').forEach(panel => {
+                    panel.style.display = 'none';
+                });
+
+                // 显示选中面板
+                const panel = document.getElementById(toolName + 'Panel');
+                if (panel) {
+                    panel.style.display = 'block';
+                    console.log('Panel shown:', toolName + 'Panel');
+                }
+            }
+
+            showHome() {
+                console.log('Showing home');
+                document.querySelectorAll('.tool-panel').forEach(panel => {
+                    panel.style.display = 'none';
+                });
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            window.switchTool = (toolName) => new TestApp().switchTool(toolName);
+            window.showHome = () => new TestApp().showHome();
+            console.log('Test app initialized');
+        });
+    </script>
+</body>
+</html>

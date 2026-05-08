@@ -16,6 +16,48 @@
     <meta property="og:locale" content="zh_CN">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/tools-simple.js"></script>
+    <script src="js/panelManager.js"></script>
+    <script>
+        // 标签页切换函数
+        function showDateTimeTab(tabName) {
+            document.querySelectorAll('#dateTimeToolPanel .tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.querySelectorAll('#dateTimeToolPanel .tab-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        function showFileToolTab(tabName) {
+            document.querySelectorAll('#fileToolPanel .tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.querySelectorAll('#fileToolPanel .tab-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        function showNetworkToolTab(tabName) {
+            document.querySelectorAll('#networkToolPanel .tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.querySelectorAll('#networkToolPanel .tab-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+        }
+    </script>
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -80,6 +122,19 @@
                     <h3>二维码生成</h3>
                     <p>文本或URL生成二维码</p>
                 </div>
+
+                <!-- 广告卡片 -->
+                <div class="tool-card ad-card">
+                    <div class="ad-placeholder">
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-xxxxxxxxxxxxxx"
+                             data-ad-slot="xxxxxxxxxx"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                    </div>
+                </div>
+
                 <div class="tool-card" data-tool="base64" data-category="encode" onclick="switchTool('base64')">
                     <div class="tool-icon">📝</div>
                     <h3>Base64编码</h3>
@@ -100,20 +155,619 @@
                     <h3>时间戳转换</h3>
                     <p>Unix时间戳与日期互转</p>
                 </div>
-            </div>
-        </section>
 
-        <section class="tool-workspace container" id="toolWorkspace">
-            <div class="workspace-header">
-                <h2 id="workspaceTitle">选择工具</h2>
-                <button class="back-btn" onclick="showHome()" style="display:none;">返回工具列表</button>
-            </div>
-            <div class="workspace-content" id="workspaceContent">
-                <div class="welcome-message">
-                    <p>点击上方工具卡片开始使用</p>
+                <div class="tool-card" data-tool="unitConverter" data-category="format" onclick="switchTool('unitConverter')">
+                    <div class="tool-icon">📏</div>
+                    <h3>单位转换器</h3>
+                    <p>长度、重量、温度等常用单位转换</p>
+                </div>
+                <div class="tool-card" data-tool="textTool" data-category="format" onclick="switchTool('textTool')">
+                    <div class="tool-icon">📝</div>
+                    <h3>文本工具</h3>
+                    <p>字数统计、大小写转换、文本格式化</p>
+                </div>
+                <div class="tool-card" data-tool="dateTimeTool" data-category="format" onclick="switchTool('dateTimeTool')">
+                    <div class="tool-icon">📅</div>
+                    <h3>日期时间工具</h3>
+                    <p>日期计算、时区转换、倒计时</p>
+                </div>
+                <div class="tool-card" data-tool="calculator" data-category="format" onclick="switchTool('calculator')">
+                    <div class="tool-icon">🧮</div>
+                    <h3>计算器</h3>
+                    <p>科学计算器、BMI计算器、贷款计算器</p>
+                </div>
+
+                <!-- 广告卡片 -->
+                <div class="tool-card ad-card">
+                    <div class="ad-placeholder">
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-xxxxxxxxxxxxxx"
+                             data-ad-slot="xxxxxxxxxx"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                    </div>
+                </div>
+
+                <div class="tool-card" data-tool="fileTool" data-category="format" onclick="switchTool('fileTool')">
+                    <div class="tool-icon">📁</div>
+                    <h3>文件工具</h3>
+                    <p>文件大小转换、格式检测</p>
+                </div>
+                <div class="tool-card" data-tool="networkTool" data-category="format" onclick="switchTool('networkTool')">
+                    <div class="tool-icon">🌐</div>
+                    <h3>网络工具</h3>
+                    <p>IP查询、WHOIS查询、URL解析</p>
                 </div>
             </div>
         </section>
+
+        <!-- 工具面板容器 -->
+        <div class="tool-panels-container" id="toolPanelsContainer">
+            <button class="back-btn" onclick="showHome()">← 返回首页</button>
+            <!-- 图片格式转换 -->
+            <div class="tool-panel" id="imageConverterPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>支持将图片转换为JPG、PNG、WebP、GIF、BMP格式。点击选择或拖拽上传图片。</p>
+                </div>
+                <div class="upload-area" id="imageUploadArea">
+                    <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+                    <div class="upload-placeholder" onclick="document.getElementById('imageFileInput').click()">
+                        <span class="upload-icon">📁</span>
+                        <p>点击选择图片或拖拽到这里</p>
+                        <p class="upload-hint">支持 JPG, PNG, WebP, GIF, BMP (最大10MB)</p>
+                    </div>
+                    <div class="preview-container" id="imagePreviewContainer" style="display:none;">
+                        <img id="imagePreview" alt="预览">
+                        <button class="remove-btn" onclick="removeImage()">×</button>
+                    </div>
+                </div>
+                <div class="format-select" id="formatSelect" style="display:none;">
+                    <label>转换为：</label>
+                    <select id="targetFormat">
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="convertImage()">转换</button>
+                </div>
+                <div class="result-area" id="imageResultArea" style="display:none;">
+                    <h4>转换完成</h4>
+                    <img id="convertedImage" alt="转换结果">
+                    <button class="btn btn-primary" onclick="downloadConvertedImage()">下载图片</button>
+                </div>
+            </div>
+
+            <!-- MD5加密 -->
+            <div class="tool-panel" id="md5Panel" style="display:none;">
+                <div class="tool-description">
+                    <p>输入文本获取MD5哈希值。MD5是一种常用的哈希算法，常用于密码存储和数据校验。</p>
+                </div>
+                <textarea id="md5Input" class="input-textarea" placeholder="请输入要加密的文本..." rows="4"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generateMD5()">生成MD5</button>
+                    <button class="btn btn-secondary" onclick="copyMD5()">复制结果</button>
+                </div>
+                <div class="result-box" id="md5Result" style="display:none;">
+                    <label>MD5哈希值：</label>
+                    <div class="result-value">
+                        <code id="md5Value"></code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 简繁体转换 -->
+            <div class="tool-panel" id="simplifiedTraditionalPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>将简体中文转换为繁体中文，或将繁体中文转换为简体中文。</p>
+                </div>
+                <textarea id="stInput" class="input-textarea" placeholder="请输入要转换的文本..." rows="4"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="toTraditional()">转繁体</button>
+                    <button class="btn btn-primary" onclick="toSimplified()">转简体</button>
+                    <button class="btn btn-secondary" onclick="copySTResult()">复制结果</button>
+                </div>
+                <div class="result-box" id="stResultBox" style="display:none;">
+                    <label>转换结果：</label>
+                    <div class="result-value">
+                        <textarea id="stOutput" class="input-textarea" rows="4" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 二维码生成 -->
+            <div class="tool-panel" id="qrcodePanel" style="display:none;">
+                <div class="tool-description">
+                    <p>输入文本或URL生成二维码图片，可自定义尺寸。</p>
+                </div>
+                <textarea id="qrcodeInput" class="input-textarea" placeholder="请输入文本或网址..." rows="2"></textarea>
+                <div class="format-select">
+                    <label>尺寸：</label>
+                    <select id="qrcodeSize">
+                        <option value="100">100px</option>
+                        <option value="150">150px</option>
+                        <option value="200" selected>200px</option>
+                        <option value="250">250px</option>
+                        <option value="300">300px</option>
+                        <option value="400">400px</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="generateQRCode()">生成二维码</button>
+                </div>
+                <div class="result-area" id="qrcodeResult" style="display:none;">
+                    <h4>二维码</h4>
+                    <div id="qrcodeContainer"></div>
+                    <button class="btn btn-primary" onclick="downloadQRCode()">下载二维码</button>
+                </div>
+            </div>
+
+            <!-- Base64编码 -->
+            <div class="tool-panel" id="base64Panel" style="display:none;">
+                <div class="tool-description">
+                    <p>Base64是一种基于64个可打印字符来表示二进制数据的编码方式。</p>
+                </div>
+                <div class="mode-toggle">
+                    <button class="btn btn-secondary active" id="base64EncodeBtn" onclick="setBase64Mode('encode')">编码</button>
+                    <button class="btn btn-secondary" id="base64DecodeBtn" onclick="setBase64Mode('decode')">解码</button>
+                </div>
+                <textarea id="base64Input" class="input-textarea" placeholder="请输入文本..." rows="4"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="processBase64()">转换</button>
+                    <button class="btn btn-secondary" onclick="copyBase64Result()">复制结果</button>
+                </div>
+                <div class="result-box" id="base64ResultBox" style="display:none;">
+                    <label>结果：</label>
+                    <div class="result-value">
+                        <textarea id="base64Output" class="input-textarea" rows="4" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- URL编码 -->
+            <div class="tool-panel" id="urlCodecPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>URL编码用于将特殊字符转换为URL安全格式。</p>
+                </div>
+                <div class="mode-toggle">
+                    <button class="btn btn-secondary active" id="urlEncodeBtn" onclick="setUrlMode('encode')">编码</button>
+                    <button class="btn btn-secondary" id="urlDecodeBtn" onclick="setUrlMode('decode')">解码</button>
+                </div>
+                <textarea id="urlInput" class="input-textarea" placeholder="请输入URL或文本..." rows="4"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="processUrl()">转换</button>
+                    <button class="btn btn-secondary" onclick="copyUrlResult()">复制结果</button>
+                </div>
+                <div class="result-box" id="urlResultBox" style="display:none;">
+                    <label>结果：</label>
+                    <div class="result-value">
+                        <textarea id="urlOutput" class="input-textarea" rows="4" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 颜色格式转换 -->
+            <div class="tool-panel" id="colorConverterPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>在不同颜色格式之间转换：HEX、RGB、HSL。</p>
+                </div>
+                <div class="color-input-group">
+                    <div class="color-preview" id="colorPreview" style="background-color:#2563EB;"></div>
+                    <input type="text" id="colorInput" class="input-field" placeholder="输入颜色值，如 #2563EB 或 rgb(37, 99, 235)" value="#2563EB">
+                    <button class="btn btn-primary" onclick="convertColor()">转换</button>
+                </div>
+                <div class="color-outputs" id="colorOutputs" style="display:none;">
+                    <div class="color-output-item">
+                        <label>HEX</label>
+                        <div class="color-value">
+                            <input type="text" id="hexOutput" class="input-field small" readonly>
+                            <button class="btn btn-small" onclick="copyColorValue('hexOutput')">复制</button>
+                        </div>
+                    </div>
+                    <div class="color-output-item">
+                        <label>RGB</label>
+                        <div class="color-value">
+                            <input type="text" id="rgbOutput" class="input-field small" readonly>
+                            <button class="btn btn-small" onclick="copyColorValue('rgbOutput')">复制</button>
+                        </div>
+                    </div>
+                    <div class="color-output-item">
+                        <label>HSL</label>
+                        <div class="color-value">
+                            <input type="text" id="hslOutput" class="input-field small" readonly>
+                            <button class="btn btn-small" onclick="copyColorValue('hslOutput')">复制</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 时间戳转换 -->
+            <div class="tool-panel" id="timestampPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>Unix时间戳是自1970年1月1日以来的秒数，常用于编程和数据库存储。</p>
+                </div>
+                <div class="timestamp-display">
+                    <div class="current-timestamp">
+                        <label>当前时间戳：</label>
+                        <div class="timestamp-value">
+                            <code id="currentTimestamp"></code>
+                            <button class="btn btn-small" onclick="copyTimestamp()">复制</button>
+                        </div>
+                    </div>
+                    <div class="current-date">
+                        <label>当前时间：</label>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+                <div class="timestamp-convert">
+                    <div class="convert-row">
+                        <label>时间戳：</label>
+                        <input type="number" id="timestampInput" class="input-field" placeholder="输入时间戳">
+                        <button class="btn btn-primary" onclick="timestampToDate()">转日期</button>
+                    </div>
+                    <div class="convert-row">
+                        <label>日期：</label>
+                        <input type="datetime-local" id="dateInput" class="input-field">
+                        <button class="btn btn-primary" onclick="dateToTimestamp()">转时间戳</button>
+                    </div>
+                </div>
+                <div class="result-box" id="timestampResult" style="display:none;">
+                    <label>转换结果：</label>
+                    <div class="result-value">
+                        <code id="timestampResultValue"></code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 单位转换器 -->
+            <div class="tool-panel" id="unitConverterPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>长度、重量、温度等常用单位转换工具。</p>
+                </div>
+                <div class="unit-converter">
+                    <div class="convert-row">
+                        <label>数值：</label>
+                        <input type="number" id="unitInput" class="input-field" placeholder="输入数值">
+                    </div>
+                    <div class="convert-row">
+                        <label>从：</label>
+                        <select id="fromUnit" class="input-field">
+                            <option value="meter">米</option>
+                            <option value="centimeter">厘米</option>
+                            <option value="kilogram">千克</option>
+                            <option value="gram">克</option>
+                            <option value="celsius">摄氏度</option>
+                            <option value="fahrenheit">华氏度</option>
+                        </select>
+                    </div>
+                    <div class="convert-row">
+                        <label>到：</label>
+                        <select id="toUnit" class="input-field">
+                            <option value="centimeter">厘米</option>
+                            <option value="meter">米</option>
+                            <option value="gram">克</option>
+                            <option value="kilogram">千克</option>
+                            <option value="fahrenheit">华氏度</option>
+                            <option value="celsius">摄氏度</option>
+                        </select>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="UnitConverter.convert()">转换</button>
+                    </div>
+                </div>
+                <div class="result-box" id="unitResultBox" style="display:none;">
+                    <label>转换结果：</label>
+                    <div class="result-value">
+                        <code id="unitResult"></code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文本工具 -->
+            <div class="tool-panel" id="textToolPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>字数统计、大小写转换、文本格式化等文本处理工具。</p>
+                </div>
+                <div class="text-tool">
+                    <textarea id="textToolInput" class="input-textarea" placeholder="请输入文本..." rows="6"></textarea>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="TextTool.countWords()">统计字数</button>
+                        <button class="btn btn-primary" onclick="TextTool.convertCase()">转换大小写</button>
+                    </div>
+                    <div class="mode-toggle" style="margin-top: 16px;">
+                        <label>转换类型：</label>
+                        <label><input type="radio" name="caseType" value="upper" checked> 大写</label>
+                        <label><input type="radio" name="caseType" value="lower"> 小写</label>
+                        <label><input type="radio" name="caseType" value="title"> 首字母大写</label>
+                    </div>
+                </div>
+                <div class="result-box" id="textToolResult" style="display:none;">
+                    <label>统计结果：</label>
+                    <div class="result-value">
+                        <div>字数：<span id="wordCount">0</span></div>
+                        <div>字符数：<span id="charCount">0</span></div>
+                        <div>行数：<span id="lineCount">0</span></div>
+                    </div>
+                </div>
+                <div class="result-box" id="textToolResultBox" style="display:none;">
+                    <label>转换结果：</label>
+                    <div class="result-value">
+                        <textarea id="textToolOutput" class="input-textarea" rows="4" readonly></textarea>
+                        <button class="btn btn-secondary" onclick="TextTool.copyText()">复制结果</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日期时间工具 -->
+            <div class="tool-panel" id="dateTimeToolPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>日期计算、时区转换、倒计时等日期时间处理工具。</p>
+                </div>
+                <div class="date-time-tool">
+                    <div class="tab-buttons">
+                        <button class="btn btn-secondary active" onclick="showDateTimeTab('date')">日期计算</button>
+                        <button class="btn btn-secondary" onclick="showDateTimeTab('timezone')">时区转换</button>
+                        <button class="btn btn-secondary" onclick="showDateTimeTab('countdown')">倒计时</button>
+                    </div>
+
+                    <!-- 日期计算标签页 -->
+                    <div id="dateTab" class="tab-content">
+                        <div class="convert-row">
+                            <label>日期：</label>
+                            <input type="date" id="dateTimeInput" class="input-field">
+                        </div>
+                        <div class="convert-row">
+                            <label>天数：</label>
+                            <input type="number" id="daysToAdd" class="input-field" placeholder="输入天数">
+                        </div>
+                        <div class="mode-toggle">
+                            <label>操作：</label>
+                            <label><input type="radio" name="dateOperation" value="add" checked> 加</label>
+                            <label><input type="radio" name="dateOperation" value="subtract"> 减</label>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="DateTimeTool.calculateDate()">计算</button>
+                        </div>
+                    </div>
+
+                    <!-- 时区转换标签页 -->
+                    <div id="timezoneTab" class="tab-content" style="display:none;">
+                        <div class="convert-row">
+                            <label>时间：</label>
+                            <input type="datetime-local" id="timeInput" class="input-field">
+                        </div>
+                        <div class="convert-row">
+                            <label>从时区：</label>
+                            <select id="fromTimezone" class="input-field">
+                                <option value="-12">UTC-12</option>
+                                <option value="-11">UTC-11</option>
+                                <option value="-10">UTC-10</option>
+                                <option value="-9">UTC-9</option>
+                                <option value="-8">UTC-8 (PST)</option>
+                                <option value="-7">UTC-7 (MST)</option>
+                                <option value="-6">UTC-6 (CST)</option>
+                                <option value="-5">UTC-5 (EST)</option>
+                                <option value="0" selected>UTC+0 (GMT)</option>
+                                <option value="1">UTC+1 (CET)</option>
+                                <option value="2">UTC+2 (EET)</option>
+                                <option value="3">UTC+3</option>
+                                <option value="4">UTC+4</option>
+                                <option value="5">UTC+5</option>
+                                <option value="6">UTC+6</option>
+                                <option value="7">UTC+7</option>
+                                <option value="8">UTC+8 (CST)</option>
+                                <option value="9">UTC+9 (JST)</option>
+                                <option value="10">UTC+10</option>
+                                <option value="11">UTC+11</option>
+                                <option value="12">UTC+12</option>
+                            </select>
+                        </div>
+                        <div class="convert-row">
+                            <label>到时区：</label>
+                            <select id="toTimezone" class="input-field">
+                                <option value="-12">UTC-12</option>
+                                <option value="-11">UTC-11</option>
+                                <option value="-10">UTC-10</option>
+                                <option value="-9">UTC-9</option>
+                                <option value="-8">UTC-8 (PST)</option>
+                                <option value="-7">UTC-7 (MST)</option>
+                                <option value="-6">UTC-6 (CST)</option>
+                                <option value="-5">UTC-5 (EST)</option>
+                                <option value="0">UTC+0 (GMT)</option>
+                                <option value="1">UTC+1 (CET)</option>
+                                <option value="2">UTC+2 (EET)</option>
+                                <option value="3">UTC+3</option>
+                                <option value="4">UTC+4</option>
+                                <option value="5">UTC+5</option>
+                                <option value="6">UTC+6</option>
+                                <option value="7">UTC+7</option>
+                                <option value="8" selected>UTC+8 (CST)</option>
+                                <option value="9">UTC+9 (JST)</option>
+                                <option value="10">UTC+10</option>
+                                <option value="11">UTC+11</option>
+                                <option value="12">UTC+12</option>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="DateTimeTool.convertTimezone()">转换</button>
+                        </div>
+                    </div>
+
+                    <!-- 倒计时标签页 -->
+                    <div id="countdownTab" class="tab-content" style="display:none;">
+                        <div class="convert-row">
+                            <label>目标日期：</label>
+                            <input type="datetime-local" id="countdownDate" class="input-field">
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="DateTimeTool.startCountdown()">开始倒计时</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-box" id="dateTimeResultBox" style="display:none;">
+                    <label>计算结果：</label>
+                    <div class="result-value">
+                        <code id="dateTimeResult"></code>
+                    </div>
+                </div>
+                <div class="result-box" id="timezoneResultBox" style="display:none;">
+                    <label>转换结果：</label>
+                    <div class="result-value">
+                        <code id="timezoneResult"></code>
+                    </div>
+                </div>
+                <div class="result-box" id="countdownResult" style="display:none;">
+                    <label>倒计时：</label>
+                    <div class="result-value">
+                        <div>天数：<span id="countdownDays">0</span></div>
+                        <div>小时：<span id="countdownHours">0</span></div>
+                        <div>分钟：<span id="countdownMinutes">0</span></div>
+                        <div>秒数：<span id="countdownSeconds">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 计算器 -->
+            <div class="tool-panel" id="calculatorPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>科学计算器、BMI计算器、贷款计算器等计算工具。</p>
+                </div>
+                <div class="calculator">
+                    <input type="text" id="calcInput" class="input-field" placeholder="输入表达式，如 2+2*3" value="">
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="Calculator.calculate()">计算</button>
+                        <button class="btn btn-secondary" onclick="Calculator.clear()">清空</button>
+                    </div>
+                </div>
+                <div class="result-box" id="calcResultBox" style="display:none;">
+                    <label>计算结果：</label>
+                    <div class="result-value">
+                        <code id="calcResult"></code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文件工具 -->
+            <div class="tool-panel" id="fileToolPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>文件大小转换、格式检测等文件处理工具。</p>
+                </div>
+                <div class="file-tool">
+                    <div class="tab-buttons">
+                        <button class="btn btn-secondary active" onclick="showFileToolTab('size')">文件大小转换</button>
+                        <button class="btn btn-secondary" onclick="showFileToolTab('type')">文件类型检测</button>
+                    </div>
+
+                    <!-- 文件大小转换标签页 -->
+                    <div id="sizeTab" class="tab-content">
+                        <div class="convert-row">
+                            <label>文件大小：</label>
+                            <input type="number" id="fileSizeInput" class="input-field" placeholder="输入大小">
+                        </div>
+                        <div class="convert-row">
+                            <label>单位：</label>
+                            <select id="fileSizeUnit" class="input-field">
+                                <option value="B">字节</option>
+                                <option value="KB">KB</option>
+                                <option value="MB">MB</option>
+                                <option value="GB">GB</option>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="FileTool.checkFileSize()">转换</button>
+                        </div>
+                    </div>
+
+                    <!-- 文件类型检测标签页 -->
+                    <div id="typeTab" class="tab-content" style="display:none;">
+                        <div class="convert-row">
+                            <label>文件名：</label>
+                            <input type="text" id="fileTypeInput" class="input-field" placeholder="输入文件名，如 document.pdf">
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="FileTool.detectFileType()">检测类型</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-box" id="fileToolResult" style="display:none;">
+                    <label>转换结果：</label>
+                    <div class="result-value">
+                        <div>KB：<span id="fileSizeKB">0</span></div>
+                        <div>MB：<span id="fileSizeMB">0</span></div>
+                        <div>GB：<span id="fileSizeGB">0</span></div>
+                    </div>
+                </div>
+                <div class="result-box" id="fileToolResultBox" style="display:none;">
+                    <label>检测结果：</label>
+                    <div class="result-value">
+                        <code id="fileTypeResult"></code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 网络工具 -->
+            <div class="tool-panel" id="networkToolPanel" style="display:none;">
+                <div class="tool-description">
+                    <p>IP查询、WHOIS查询、URL解析等网络工具。</p>
+                </div>
+                <div class="network-tool">
+                    <div class="tab-buttons">
+                        <button class="btn btn-secondary active" onclick="showNetworkToolTab('ip')">IP查询</button>
+                        <button class="btn btn-secondary" onclick="showNetworkToolTab('whois')">WHOIS查询</button>
+                        <button class="btn btn-secondary" onclick="showNetworkToolTab('url')">URL解析</button>
+                    </div>
+
+                    <!-- IP查询标签页 -->
+                    <div id="ipTab" class="tab-content">
+                        <div class="convert-row">
+                            <label>IP地址：</label>
+                            <input type="text" id="ipInput" class="input-field" placeholder="输入IP地址，如 192.168.1.1">
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="NetworkTool.checkIP()">检查</button>
+                        </div>
+                    </div>
+
+                    <!-- WHOIS查询标签页 -->
+                    <div id="whoisTab" class="tab-content" style="display:none;">
+                        <div class="convert-row">
+                            <label>域名：</label>
+                            <input type="text" id="whoisInput" class="input-field" placeholder="输入域名，如 example.com">
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="NetworkTool.whoisLookup()">查询</button>
+                        </div>
+                    </div>
+
+                    <!-- URL解析标签页 -->
+                    <div id="urlTab" class="tab-content" style="display:none;">
+                        <div class="convert-row">
+                            <label>URL：</label>
+                            <input type="text" id="urlInput" class="input-field" placeholder="输入URL，如 https://example.com">
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="NetworkTool.parseURL()">解析</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-box" id="networkToolResult" style="display:none;">
+                    <label>检查结果：</label>
+                    <div class="result-value">
+                        <code id="ipResult"></code>
+                    </div>
+                </div>
+                <div class="result-box" id="networkToolResultBox" style="display:none;">
+                    <label>查询结果：</label>
+                    <div class="result-value">
+                        <code id="whoisResult"></code>
+                    </div>
+                </div>
+                <div class="result-box" id="networkToolResultBox2" style="display:none;">
+                    <label>解析结果：</label>
+                    <div class="result-value">
+                        <code id="urlResult"></code>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer class="footer">
@@ -123,212 +777,21 @@
         </div>
     </footer>
 
+    <!-- 广告区域 -->
+    <div class="ad-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-xxxxxxxxxxxxxx"
+             data-ad-slot="xxxxxxxxxx"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
     <div class="toast" id="toast"></div>
 
-    <div class="tool-panel" id="imageConverterPanel" style="display:none;">
-        <div class="tool-description">
-            <p>支持将图片转换为JPG、PNG、WebP、GIF、BMP格式。点击选择或拖拽上传图片。</p>
-        </div>
-        <div class="upload-area" id="imageUploadArea">
-            <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
-            <div class="upload-placeholder" onclick="document.getElementById('imageFileInput').click()">
-                <span class="upload-icon">📁</span>
-                <p>点击选择图片或拖拽到这里</p>
-                <p class="upload-hint">支持 JPG, PNG, WebP, GIF, BMP (最大10MB)</p>
-            </div>
-            <div class="preview-container" id="imagePreviewContainer" style="display:none;">
-                <img id="imagePreview" alt="预览">
-                <button class="remove-btn" onclick="removeImage()">×</button>
-            </div>
-        </div>
-        <div class="format-select" id="formatSelect" style="display:none;">
-            <label>转换为：</label>
-            <select id="targetFormat">
-                <option value="image/jpeg">JPG</option>
-                <option value="image/png">PNG</option>
-                <option value="image/webp">WebP</option>
-            </select>
-            <button class="btn btn-primary" onclick="convertImage()">转换</button>
-        </div>
-        <div class="result-area" id="imageResultArea" style="display:none;">
-            <h4>转换完成</h4>
-            <img id="convertedImage" alt="转换结果">
-            <button class="btn btn-primary" onclick="downloadConvertedImage()">下载图片</button>
-        </div>
-    </div>
 
-    <div class="tool-panel" id="md5Panel" style="display:none;">
-        <div class="tool-description">
-            <p>输入文本获取MD5哈希值。MD5是一种常用的哈希算法，常用于密码存储和数据校验。</p>
-        </div>
-        <textarea id="md5Input" class="input-textarea" placeholder="请输入要加密的文本..." rows="4"></textarea>
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="generateMD5()">生成MD5</button>
-            <button class="btn btn-secondary" onclick="copyMD5()">复制结果</button>
-        </div>
-        <div class="result-box" id="md5Result" style="display:none;">
-            <label>MD5哈希值：</label>
-            <div class="result-value">
-                <code id="md5Value"></code>
-            </div>
-        </div>
-    </div>
-
-    <div class="tool-panel" id="simplifiedTraditionalPanel" style="display:none;">
-        <div class="tool-description">
-            <p>将简体中文转换为繁体中文，或将繁体中文转换为简体中文。</p>
-        </div>
-        <textarea id="stInput" class="input-textarea" placeholder="请输入要转换的文本..." rows="4"></textarea>
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="toTraditional()">转繁体</button>
-            <button class="btn btn-primary" onclick="toSimplified()">转简体</button>
-            <button class="btn btn-secondary" onclick="copySTResult()">复制结果</button>
-        </div>
-        <div class="result-box" id="stResultBox" style="display:none;">
-            <label>转换结果：</label>
-            <div class="result-value">
-                <textarea id="stOutput" class="input-textarea" rows="4" readonly></textarea>
-            </div>
-        </div>
-    </div>
-
-    <div class="tool-panel" id="qrcodePanel" style="display:none;">
-        <div class="tool-description">
-            <p>输入文本或URL生成二维码图片，可自定义尺寸。</p>
-        </div>
-        <textarea id="qrcodeInput" class="input-textarea" placeholder="请输入文本或网址..." rows="2"></textarea>
-        <div class="format-select">
-            <label>尺寸：</label>
-            <select id="qrcodeSize">
-                <option value="100">100px</option>
-                <option value="150">150px</option>
-                <option value="200" selected>200px</option>
-                <option value="250">250px</option>
-                <option value="300">300px</option>
-                <option value="400">400px</option>
-            </select>
-            <button class="btn btn-primary" onclick="generateQRCode()">生成二维码</button>
-        </div>
-        <div class="result-area" id="qrcodeResult" style="display:none;">
-            <h4>二维码</h4>
-            <div id="qrcodeContainer"></div>
-            <button class="btn btn-primary" onclick="downloadQRCode()">下载二维码</button>
-        </div>
-    </div>
-
-    <div class="tool-panel" id="base64Panel" style="display:none;">
-        <div class="tool-description">
-            <p>Base64是一种基于64个可打印字符来表示二进制数据的编码方式。</p>
-        </div>
-        <div class="mode-toggle">
-            <button class="btn btn-secondary active" id="base64EncodeBtn" onclick="setBase64Mode('encode')">编码</button>
-            <button class="btn btn-secondary" id="base64DecodeBtn" onclick="setBase64Mode('decode')">解码</button>
-        </div>
-        <textarea id="base64Input" class="input-textarea" placeholder="请输入文本..." rows="4"></textarea>
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="processBase64()">转换</button>
-            <button class="btn btn-secondary" onclick="copyBase64Result()">复制结果</button>
-        </div>
-        <div class="result-box" id="base64ResultBox" style="display:none;">
-            <label>结果：</label>
-            <div class="result-value">
-                <textarea id="base64Output" class="input-textarea" rows="4" readonly></textarea>
-            </div>
-        </div>
-    </div>
-
-    <div class="tool-panel" id="urlCodecPanel" style="display:none;">
-        <div class="tool-description">
-            <p>URL编码用于将特殊字符转换为URL安全格式。</p>
-        </div>
-        <div class="mode-toggle">
-            <button class="btn btn-secondary active" id="urlEncodeBtn" onclick="setUrlMode('encode')">编码</button>
-            <button class="btn btn-secondary" id="urlDecodeBtn" onclick="setUrlMode('decode')">解码</button>
-        </div>
-        <textarea id="urlInput" class="input-textarea" placeholder="请输入URL或文本..." rows="4"></textarea>
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="processUrl()">转换</button>
-            <button class="btn btn-secondary" onclick="copyUrlResult()">复制结果</button>
-        </div>
-        <div class="result-box" id="urlResultBox" style="display:none;">
-            <label>结果：</label>
-            <div class="result-value">
-                <textarea id="urlOutput" class="input-textarea" rows="4" readonly></textarea>
-            </div>
-        </div>
-    </div>
-
-    <div class="tool-panel" id="colorConverterPanel" style="display:none;">
-        <div class="tool-description">
-            <p>在不同颜色格式之间转换：HEX、RGB、HSL。</p>
-        </div>
-        <div class="color-input-group">
-            <div class="color-preview" id="colorPreview" style="background-color:#2563EB;"></div>
-            <input type="text" id="colorInput" class="input-field" placeholder="输入颜色值，如 #2563EB 或 rgb(37, 99, 235)" value="#2563EB">
-            <button class="btn btn-primary" onclick="convertColor()">转换</button>
-        </div>
-        <div class="color-outputs" id="colorOutputs" style="display:none;">
-            <div class="color-output-item">
-                <label>HEX</label>
-                <div class="color-value">
-                    <input type="text" id="hexOutput" class="input-field small" readonly>
-                    <button class="btn btn-small" onclick="copyColorValue('hexOutput')">复制</button>
-                </div>
-            </div>
-            <div class="color-output-item">
-                <label>RGB</label>
-                <div class="color-value">
-                    <input type="text" id="rgbOutput" class="input-field small" readonly>
-                    <button class="btn btn-small" onclick="copyColorValue('rgbOutput')">复制</button>
-                </div>
-            </div>
-            <div class="color-output-item">
-                <label>HSL</label>
-                <div class="color-value">
-                    <input type="text" id="hslOutput" class="input-field small" readonly>
-                    <button class="btn btn-small" onclick="copyColorValue('hslOutput')">复制</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="tool-panel" id="timestampPanel" style="display:none;">
-        <div class="tool-description">
-            <p>Unix时间戳是自1970年1月1日以来的秒数，常用于编程和数据库存储。</p>
-        </div>
-        <div class="timestamp-display">
-            <div class="current-timestamp">
-                <label>当前时间戳：</label>
-                <div class="timestamp-value">
-                    <code id="currentTimestamp"></code>
-                    <button class="btn btn-small" onclick="copyTimestamp()">复制</button>
-                </div>
-            </div>
-            <div class="current-date">
-                <label>当前时间：</label>
-                <span id="currentDate"></span>
-            </div>
-        </div>
-        <div class="timestamp-convert">
-            <div class="convert-row">
-                <label>时间戳：</label>
-                <input type="number" id="timestampInput" class="input-field" placeholder="输入时间戳">
-                <button class="btn btn-primary" onclick="timestampToDate()">转日期</button>
-            </div>
-            <div class="convert-row">
-                <label>日期：</label>
-                <input type="datetime-local" id="dateInput" class="input-field">
-                <button class="btn btn-primary" onclick="dateToTimestamp()">转时间戳</button>
-            </div>
-        </div>
-        <div class="result-box" id="timestampResult" style="display:none;">
-            <label>转换结果：</label>
-            <div class="result-value">
-                <code id="timestampResultValue"></code>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/app.js"></script>
+    <!-- 简化版本 -->
+<script src="js/config.js"></script>
+<script src="js/app-simple.js"></script>
 </body>
 </html>

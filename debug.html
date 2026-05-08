@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试页面</title>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/panelManager.js"></script>
+    <script src="js/tools/imageConverter.js"></script>
+    <script src="js/tools/md5.js"></script>
+    <script src="js/tools/simplifiedTraditional.js"></script>
+    <script src="js/tools/qrcode.js"></script>
+    <script src="js/tools/base64.js"></script>
+    <script src="js/tools/urlCodec.js"></script>
+    <script src="js/tools/colorConverter.js"></script>
+    <script src="js/tools/timestamp.js"></script>
+    <script>
+        // 测试函数
+        function testSwitchTool(toolName) {
+            console.log('Test switch tool:', toolName);
+            if (window.switchTool) {
+                window.switchTool(toolName);
+            } else {
+                console.error('switchTool function not found');
+            }
+        }
+
+        function testShowHome() {
+            console.log('Test show home');
+            if (window.showHome) {
+                window.showHome();
+            } else {
+                console.error('showHome function not found');
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Debug page loaded');
+
+            // 测试函数是否存在
+            console.log('switchTool exists:', typeof window.switchTool);
+            console.log('showHome exists:', typeof window.showHome);
+
+            // 初始化应用
+            if (typeof WebToolApp !== 'undefined') {
+                new WebToolApp();
+                console.log('WebToolApp initialized');
+            } else {
+                console.error('WebToolApp not found');
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>调试页面</h1>
+    <button onclick="testSwitchTool('imageConverter')">测试图片转换</button>
+    <button onclick="testSwitchTool('md5')">测试MD5</button>
+    <button onclick="testShowHome()">返回首页</button>
+
+    <div id="toolPanelsContainer"></div>
+
+    <!-- 测试用的工具面板 -->
+    <div class="tool-panel" id="imageConverterPanel" style="display:none; border: 1px solid red; padding: 10px;">
+        <h3>图片转换器</h3>
+        <p>这是图片转换器的面板</p>
+    </div>
+
+    <div class="tool-panel" id="md5Panel" style="display:none; border: 1px solid blue; padding: 10px;">
+        <h3>MD5工具</h3>
+        <p>这是MD5工具的面板</p>
+    </div>
+</body>
+</html>

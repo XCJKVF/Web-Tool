@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简化版工具集合</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .tool-panel {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .tool-panel.active {
+            display: block;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        #toolPanelsContainer {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px dashed #999;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>工具集合 - 简化版</h1>
+
+    <div>
+        <button onclick="switchTool('imageConverter')">图片转换</button>
+        <button onclick="switchTool('md5')">MD5加密</button>
+        <button onclick="switchTool('qrcode')">二维码生成</button>
+        <button onclick="showHome()">返回首页</button>
+    </div>
+
+    <div id="toolPanelsContainer"></div>
+
+    <script>
+        // 简单的切换函数
+        function switchTool(toolName) {
+            console.log('Switching to tool:', toolName);
+
+            // 隐藏所有面板
+            document.querySelectorAll('.tool-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+
+            // 创建新面板（如果不存在）
+            let panel = document.getElementById(toolName + 'Panel');
+            if (!panel) {
+                panel = document.createElement('div');
+                panel.id = toolName + 'Panel';
+                panel.className = 'tool-panel';
+
+                if (toolName === 'imageConverter') {
+                    panel.innerHTML = `
+                        <h3>图片格式转换</h3>
+                        <input type="file" accept="image/*">
+                        <button onclick="convertImage()">转换</button>
+                    `;
+                } else if (toolName === 'md5') {
+                    panel.innerHTML = `
+                        <h3>MD5加密</h3>
+                        <textarea placeholder="输入文本..." rows="4" cols="50"></textarea>
+                        <button onclick="generateMD5()">生成MD5</button>
+                        <div id="md5Result"></div>
+                    `;
+                } else if (toolName === 'qrcode') {
+                    panel.innerHTML = `
+                        <h3>二维码生成</h3>
+                        <textarea placeholder="输入文本..." rows="2" cols="50"></textarea>
+                        <button onclick="generateQRCode()">生成二维码</button>
+                        <div id="qrcodeResult"></div>
+                    `;
+                }
+
+                document.getElementById('toolPanelsContainer').appendChild(panel);
+            }
+
+            // 显示面板
+            panel.style.display = 'block';
+        }
+
+        function showHome() {
+            document.querySelectorAll('.tool-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+        }
+
+        // 工具函数
+        function convertImage() {
+            alert('图片转换功能');
+        }
+
+        function generateMD5() {
+            const input = document.querySelector('#md5Panel textarea').value;
+            if (!input) {
+                alert('请输入文本');
+                return;
+            }
+            // 简单的 MD5 模拟
+            const md5Hash = '模拟MD5值: ' + btoa(input);
+            document.getElementById('md5Result').innerHTML = '<p>MD5: ' + md5Hash + '</p>';
+        }
+
+        function generateQRCode() {
+            const input = document.querySelector('#qrcodePanel textarea').value;
+            if (!input) {
+                alert('请输入文本');
+                return;
+            }
+            document.getElementById('qrcodeResult').innerHTML = `
+                <p>二维码预览</p>
+                <div style="width: 100px; height: 100px; background: #000; color: #fff; text-align: center; line-height: 100px;">
+                    QR
+                </div>
+            `;
+        }
+
+        console.log('Simple page loaded');
+    </script>
+</body>
+</html>
